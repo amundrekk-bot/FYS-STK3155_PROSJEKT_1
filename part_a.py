@@ -4,17 +4,6 @@ from sklearn.metrics import mean_squared_error as mse, r2_score
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 
-rs = 2026
-np.random.seed(rs)
-std = 0.1
-
-n = 100
-x_0 = -1
-x_1 = 1
-
-x = np.linspace(x_0, x_1, n)
-y = (1 / (1 + (25 * (x ** 2)))) + np.random.normal(0, std, len(x))
-
 def design_matrix(data, degree):
     """
     Input data and degree of polynomial. Return design matrix
@@ -30,16 +19,7 @@ def OLS(dsgn_mtrx, target):
     theta = np.linalg.pinv(dsgn_mtrx) @ target
     return theta
 
-def ridge(X, target, lmbda = 0.1):
-    """
-    Input data, lmbda, and target vriable. return polynomial coefficients.
-    Uses ridge regression with np.linalg.solve().
-    """
-    theta = np.linalg.solve(X.T @ X + n * np.eye(len(X[0, :])), X.T @ target)
-    return theta
-
-
-def plot_score(data, target, ts, degree_max, method):
+def plot_score_powers(data, target, ts, degree_max, method):
     """
     Input data, target variable, training size, and maximum degree of polnomial.
     Plots mse, r2, and coefficients.
@@ -84,5 +64,16 @@ def plot_score(data, target, ts, degree_max, method):
     
 
 
+if __name__ == "__main__":
+    rs = 2026
+    np.random.seed(rs)
+    std = 0.1
 
-plot_score(x, y, ts = 0.2, degree_max = 15, method = OLS)
+    n = 100
+    x_0 = -1
+    x_1 = 1
+
+    x = np.linspace(x_0, x_1, n)
+    y = (1 / (1 + (25 * (x ** 2)))) + np.random.normal(0, std, len(x))
+    
+    plot_score_powers(x, y, ts = 0.2, degree_max = 15, method = OLS)
