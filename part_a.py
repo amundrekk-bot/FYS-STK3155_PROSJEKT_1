@@ -24,10 +24,18 @@ def design_matrix(data, degree):
 
 def OLS(dsgn_mtrx, target):
     """
-    Input data, target variable and degree. Return the polynomial coefficients.
+    Input data and target variable. Return the polynomial coefficients.
     Uses Moore-Penrose pseudoinverse.
     """
     theta = np.linalg.pinv(dsgn_mtrx) @ target
+    return theta
+
+def ridge(X, target, lmbda = 0.1):
+    """
+    Input data, lmbda, and target vriable. return polynomial coefficients.
+    Uses ridge regression with np.linalg.solve().
+    """
+    theta = np.linalg.solve(X.T @ X + n * np.eye(len(X[0, :])), X.T @ target)
     return theta
 
 
