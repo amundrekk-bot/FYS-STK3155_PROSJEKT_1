@@ -19,7 +19,7 @@ def OLS(dsgn_mtrx, target):
     theta = np.linalg.pinv(dsgn_mtrx) @ target
     return theta
 
-def split_scale(X, target, ts):
+def split_scale(X, target, ts, rs):
     X_train, X_test, y_train, y_test = train_test_split(X, target, test_size = ts, random_state = rs)
     
     # making sure to avoid data leakage:
@@ -35,7 +35,7 @@ def split_scale(X, target, ts):
 
     return X_train_scaled, X_test_scaled, y_train_centered, y_test_centered
 
-def plot_score_powers(data, target, ts, degree_max, method):
+def plot_score_powers(data, target, ts, degree_max, method, rs):
     """
     Input data, target variable, training size, and maximum degree of polnomial.
     Plots mse, r2, and coefficients.
@@ -46,7 +46,7 @@ def plot_score_powers(data, target, ts, degree_max, method):
 
     for p in range(degree_max + 1):
         X = design_matrix(data, p)
-        X_train_scaled, X_test_scaled, y_train_centered, y_test_centered = split_scale(X, target, ts)
+        X_train_scaled, X_test_scaled, y_train_centered, y_test_centered = split_scale(X, target, ts, rs)
 
         theta = method(X_train_scaled, y_train_centered)
         y_tilde = X_test_scaled @ theta
@@ -81,4 +81,4 @@ if __name__ == "__main__":
     x = np.linspace(x_0, x_1, n)
     y = (1 / (1 + (25 * (x ** 2)))) + np.random.normal(0, std, len(x))
     
-    plot_score_powers(x, y, ts = 0.2, degree_max = 15, method = OLS)
+    plot_score_powers(x, y, ts = 0.2, degree_max = 15, method = OLS, rs = rs)

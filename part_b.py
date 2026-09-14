@@ -13,7 +13,7 @@ def ridge(X, target, lmbda = 0.1):
     return theta
 
 
-def plot_score_lmbdas(data, target, pow,  ts, lmbda_min = -8, lmbda_max = 2, nlmbdas = 20):
+def plot_score_lmbdas(data, target, pow,  ts, rs, lmbda_min = -8, lmbda_max = 2, nlmbdas = 20):
     """
     Input data, target variable, power, training size, and lmbda values.
     Plots mse, r2, and coefficients.
@@ -24,18 +24,7 @@ def plot_score_lmbdas(data, target, pow,  ts, lmbda_min = -8, lmbda_max = 2, nlm
 
     for p in range(nlmbdas):
         X = design_matrix(data, pow)
-        X_train, X_test, y_train, y_test = train_test_split(X, target, test_size = ts, random_state = rs)
-
-        # making sure to avoid data leakage:
-        scaler = StandardScaler()
-        X_train_scaled = scaler.fit_transform(X_train)
-        X_test_scaled = scaler.transform(X_test)
-        # setting intercept columns to constant ones
-        X_train_scaled[:, 0] = np.ones(len(X_train[:, 0]))
-        X_test_scaled[:, 0] = np.ones(len(X_test[:, 0]))
-
-        y_train_centered = y_train - np.mean(y_train)
-        y_test_centered = y_test - np.mean(y_train)
+        X_train_scaled, X_test_scaled, y_train_centered, y_test_centered = split_scale(X, target, ts, rs)
 
         theta = ridge(X_train_scaled, y_train_centered, lmbda = lmbdas[p])
         y_tilde = X_test_scaled @ theta
@@ -59,7 +48,6 @@ def plot_score_lmbdas(data, target, pow,  ts, lmbda_min = -8, lmbda_max = 2, nlm
     plt.show() 
 
 if __name__ == "__main__":
-
     rs = 2026
     np.random.seed(rs)
     std = 0.1
@@ -73,4 +61,4 @@ if __name__ == "__main__":
 
     pow = 25
     ts = 0.2
-    plot_score_lmbdas(x, y, pow, ts)
+    plot_score_lmbdas(x, y, pow, ts, rs)
