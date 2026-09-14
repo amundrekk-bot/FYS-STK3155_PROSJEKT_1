@@ -19,6 +19,22 @@ def OLS(dsgn_mtrx, target):
     theta = np.linalg.pinv(dsgn_mtrx) @ target
     return theta
 
+def split_scale(X, target, ts):
+    X_train, X_test, y_train, y_test = train_test_split(X, target, test_size = ts, random_state = rs)
+    
+    # making sure to avoid data leakage:
+    scaler = StandardScaler()
+    X_train_scaled = scaler.fit_transform(X_train)
+    X_test_scaled = scaler.transform(X_test)
+    # setting intercept columns to constant ones
+    X_train_scaled[:, 0] = np.ones(len(X_train[:, 0]))
+    X_test_scaled[:, 0] = np.ones(len(X_test[:, 0]))
+
+    y_train_centered = y_train - np.mean(y_train)
+    y_test_centered = y_test - np.mean(y_train)
+
+    return X_train_scaled, X_test_scaled, y_train_centered, y_test_centered
+
 def plot_score_powers(data, target, ts, degree_max, method):
     """
     Input data, target variable, training size, and maximum degree of polnomial.
@@ -30,18 +46,7 @@ def plot_score_powers(data, target, ts, degree_max, method):
 
     for p in range(degree_max + 1):
         X = design_matrix(data, p)
-        X_train, X_test, y_train, y_test = train_test_split(X, target, test_size = ts, random_state = rs)
-
-        # making sure to avoid data leakage:
-        scaler = StandardScaler()
-        X_train_scaled = scaler.fit_transform(X_train)
-        X_test_scaled = scaler.transform(X_test)
-        # setting intercept columns to constant ones
-        X_train_scaled[:, 0] = np.ones(len(X_train[:, 0]))
-        X_test_scaled[:, 0] = np.ones(len(X_test[:, 0]))
-
-        y_train_centered = y_train - np.mean(y_train)
-        y_test_centered = y_test - np.mean(y_train)
+        X_train_scaled, X_test_scaled, y_train_centered, y_test_centered = split_scale(X, target, ts)
 
         theta = method(X_train_scaled, y_train_centered)
         y_tilde = X_test_scaled @ theta
