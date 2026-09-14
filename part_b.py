@@ -9,7 +9,7 @@ def ridge(X, target, lmbda = 0.1):
     penalty = np.eye(len(X[0, :]))
     penalty[0, 0] = 0 #avoid punishing bias
 
-    theta = np.linalg.solve(X.T @ X + n * penalty, X.T @ target)
+    theta = np.linalg.solve(X.T @ X + n * lmbda * penalty, X.T @ target)
     return theta
 
 
@@ -22,7 +22,7 @@ def plot_score_lmbdas(data, target, pow,  ts, lmbda_min = -8, lmbda_max = 2, nlm
     mses = np.zeros_like(lmbdas, dtype = float)
     R2s = np.zeros_like(lmbdas, dtype = float)
 
-    for p in range(nlmbdas + 1):
+    for p in range(nlmbdas):
         X = design_matrix(data, pow)
         X_train, X_test, y_train, y_test = train_test_split(X, target, test_size = ts, random_state = rs)
 
@@ -44,16 +44,19 @@ def plot_score_lmbdas(data, target, pow,  ts, lmbda_min = -8, lmbda_max = 2, nlm
         mses[p] = mse_score
         R2s[p] = R2_score
 
-        plt.plot(lmbdas, mses, "o-", label = "MSE score")
-        plt.xlabel("Powers")
-        plt.ylabel("MSE")
-        plt.legend()
-        plt.show()
-        plt.plot(lmbdas, R2s, "o-", label = "$R^2$ score")
-        plt.xlabel("Powers")
-        plt.ylabel("$R^2$")
-        plt.legend()
-        plt.show() 
+    plt.plot(lmbdas, mses, "o-", label = "MSE score")
+    plt.xlabel("$\\lambda$")
+    plt.ylabel("MSE")
+    plt.xscale("log")
+    #plt.yscale("log")
+    plt.legend()
+    plt.show()
+    plt.plot(lmbdas, R2s, "o-", label = "$R^2$ score")
+    plt.xlabel("$\\lambda $")
+    plt.ylabel("$R^2$")
+    plt.xscale("log")
+    plt.legend()
+    plt.show() 
 
 if __name__ == "__main__":
 
@@ -68,4 +71,6 @@ if __name__ == "__main__":
     x = np.linspace(x_0, x_1, n)
     y = (1 / (1 + (25 * (x ** 2)))) + np.random.normal(0, std, len(x))
 
-    plot_score_lmbdas()
+    pow = 15
+    ts = 0.2
+    plot_score_lmbdas(x, y, pow, ts)
