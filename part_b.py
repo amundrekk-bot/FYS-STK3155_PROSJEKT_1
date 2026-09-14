@@ -9,7 +9,7 @@ def ridge(X, target, lmbda = 0.1):
     penalty = np.eye(len(X[0, :]))
     penalty[0, 0] = 0 #avoid punishing bias
 
-    theta = np.linalg.solve(X.T @ X + n * lmbda * penalty, X.T @ target)
+    theta = np.linalg.solve(X.T @ X + len(X[0, :]) * lmbda * penalty, X.T @ target)
     return theta
 
 
@@ -71,6 +71,6 @@ if __name__ == "__main__":
     x = np.linspace(x_0, x_1, n)
     y = (1 / (1 + (25 * (x ** 2)))) + np.random.normal(0, std, len(x))
 
-    pow = 15
+    pow = 25
     ts = 0.2
     plot_score_lmbdas(x, y, pow, ts)
