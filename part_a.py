@@ -24,6 +24,13 @@ def split_scale(X, target, ts, rs):
 
     return X_train_scaled, X_test_scaled, y_train_centered, y_test_centered
 
+def runge_data(n = 100, std = 0.1, rs = 2026, x0 = -1, x1 = 1):
+
+    x = np.linspace(x0, x1, n)
+    y = (1 / (1 + (25 * (x ** 2)))) + np.random.normal(0, std, len(x))
+
+    return x, y
+
 def OLS(dsgn_mtrx, target):
     """
     Input data and target variable. Return the polynomial coefficients.
@@ -37,11 +44,11 @@ def plot_score_powers(data, target, ts, degree_max, method, rs):
     Input data, target variable, training size, and maximum degree of polnomial.
     Plots mse, r2, and coefficients.
     """
-    powers = np.arange(0, degree_max + 1)
+    powers = np.arange(1, degree_max + 1)
     mses = np.zeros_like(powers, dtype = float)
     R2s = np.zeros_like(powers, dtype = float)
 
-    for p in range(degree_max + 1):
+    for p in range(1, degree_max + 1):
         X = design_matrix(data, p)
         X_train_scaled, X_test_scaled, y_train_centered, y_test_centered = split_scale(X, target, ts, rs)
 
@@ -49,8 +56,8 @@ def plot_score_powers(data, target, ts, degree_max, method, rs):
         y_tilde = X_test_scaled @ theta
         mse_score, R2_score = mse(y_test_centered, y_tilde), r2_score(y_test_centered, y_tilde)
 
-        mses[p] = mse_score
-        R2s[p] = R2_score
+        mses[p - 1] = mse_score
+        R2s[p - 1] = R2_score
 
 
     plt.plot(powers, mses, "o-", label = "MSE score")
@@ -67,15 +74,5 @@ def plot_score_powers(data, target, ts, degree_max, method, rs):
 
 
 if __name__ == "__main__":
-    rs = 2026
-    np.random.seed(rs)
-    std = 0.1
-
-    n = 100
-    x_0 = -1
-    x_1 = 1
-
-    x = np.linspace(x_0, x_1, n)
-    y = (1 / (1 + (25 * (x ** 2)))) + np.random.normal(0, std, len(x))
-    
-    plot_score_powers(x, y, ts = 0.2, degree_max = 15, method = OLS, rs = rs)
+    x, y = runge_data()
+    plot_score_powers(x, y, ts = 0.2, degree_max = 15, method = OLS, rs = 2026)
