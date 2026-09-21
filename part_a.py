@@ -28,7 +28,7 @@ def runge_data(n = 100, std = 0.1, rs = 2026, x0 = -1, x1 = 1):
     rng = np.random.default_rng(rs)
 
     x = np.linspace(x0, x1, n)
-    y = (1 / (1 + (25 * (x ** 2)))) + rng.standard_normal(len(x))
+    y = (1 / (1 + (25 * (x ** 2)))) + (std * rng.standard_normal(len(x)))
 
     return x, y
 
