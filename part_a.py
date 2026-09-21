@@ -8,16 +8,8 @@ def design_matrix(data, degree):
     """
     Input data and degree of polynomial. Return design matrix
     """
-    X = np.column_stack([data ** j for j in range(degree + 1)])
+    X = np.column_stack([data ** j for j in range(1, degree + 1)])
     return X
-
-def OLS(dsgn_mtrx, target):
-    """
-    Input data and target variable. Return the polynomial coefficients.
-    Uses Moore-Penrose pseudoinverse.
-    """
-    theta = np.linalg.pinv(dsgn_mtrx) @ target
-    return theta
 
 def split_scale(X, target, ts, rs):
     X_train, X_test, y_train, y_test = train_test_split(X, target, test_size = ts, random_state = rs)
@@ -26,14 +18,19 @@ def split_scale(X, target, ts, rs):
     scaler = StandardScaler()
     X_train_scaled = scaler.fit_transform(X_train)
     X_test_scaled = scaler.transform(X_test)
-    # setting intercept columns to constant ones
-    X_train_scaled[:, 0] = np.ones(len(X_train[:, 0]))
-    X_test_scaled[:, 0] = np.ones(len(X_test[:, 0]))
-
+    
     y_train_centered = y_train - np.mean(y_train)
     y_test_centered = y_test - np.mean(y_train)
 
     return X_train_scaled, X_test_scaled, y_train_centered, y_test_centered
+
+def OLS(dsgn_mtrx, target):
+    """
+    Input data and target variable. Return the polynomial coefficients.
+    Uses Moore-Penrose pseudoinverse.
+    """
+    theta = np.linalg.pinv(dsgn_mtrx) @ target
+    return theta
 
 def plot_score_powers(data, target, ts, degree_max, method, rs):
     """
