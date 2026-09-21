@@ -49,15 +49,7 @@ def plot_score_lmbdas(data, target, pow,  ts, rs, lmbda_min = -8, lmbda_max = 2,
 
 if __name__ == "__main__":
     rs = 2026
-    np.random.seed(rs)
-    std = 0.1
-
-    n = 100
-    x_0 = -1
-    x_1 = 1
-
-    x = np.linspace(x_0, x_1, n)
-    y = (1 / (1 + (25 * (x ** 2)))) + np.random.normal(0, std, len(x))
+    x, y = runge_data()
 
     pow = 25
     ts = 0.2
